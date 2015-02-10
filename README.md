@@ -43,10 +43,14 @@ We have configured Jenkins Master via the UI.
 The config file is as follows:
 
 ```
-  ubuntu@ip-172-31-40-43:/var/lib/jenkins$ cat config.xml 
-  <?xml version='1.0' encoding='UTF-8'?>
-  <hudson>
-  <disabledAdministrativeMonitors/>
+ubuntu@ip-172-31-46-200:/var/lib/jenkins$ cat config.xml
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson>
+  <disabledAdministrativeMonitors>
+    <string>hudson.node_monitors.MonitorMarkedNodeOffline</string>
+    <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
+    <string>jenkins.diagnostics.SecurityIsOffMonitor</string>
+  </disabledAdministrativeMonitors>
   <version>1.598</version>
   <numExecutors>1</numExecutors>
   <mode>NORMAL</mode>
@@ -55,12 +59,12 @@ The config file is as follows:
   <securityRealm class="hudson.security.SecurityRealm$None"/>
   <disableRememberMe>false</disableRememberMe>
   <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
-  <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
-   <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULLNAME}</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
   <jdks>
     <jdk>
-      <name>Default JDK</name>
-      <home>/usr/lib/jvm/java-7-openjdk-amd64/</home>
+      <name>Default</name>
+      <home>/usr/lib/jvm/java-7-openjdk-amd64</home>
       <properties/>
     </jdk>
   </jdks>
@@ -69,16 +73,16 @@ The config file is as follows:
   <clouds/>
   <slaves>
     <slave>
-      <name>ND4J Slave</name>
+      <name>Slave</name>
       <description></description>
       <remoteFS>/home/ubuntu</remoteFS>
       <numExecutors>1</numExecutors>
       <mode>NORMAL</mode>
       <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
       <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.9">
-        <host>172.31.40.2</host>
+        <host>172.31.45.63</host>
         <port>22</port>
-        <credentialsId>607e2368-e1a2-4995-890b-1ce1eba8d1ec</credentialsId>
+        <credentialsId>8d634b46-c867-4a6f-8018-406056dbd31b</credentialsId>
         <maxNumRetries>0</maxNumRetries>
         <retryWaitTime>0</retryWaitTime>
       </launcher>
@@ -87,16 +91,16 @@ The config file is as follows:
       <userId>anonymous</userId>
     </slave>
     <slave>
-      <name>ND4J Slave2</name>
+      <name>Slave2</name>
       <description></description>
       <remoteFS>/home/ubuntu</remoteFS>
       <numExecutors>1</numExecutors>
       <mode>NORMAL</mode>
       <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
       <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.9">
-        <host>172.31.43.201</host>
+        <host>172.31.36.202</host>
         <port>22</port>
-        <credentialsId>607e2368-e1a2-4995-890b-1ce1eba8d1ec</credentialsId>
+        <credentialsId>8d634b46-c867-4a6f-8018-406056dbd31b</credentialsId>
         <maxNumRetries>0</maxNumRetries>
         <retryWaitTime>0</retryWaitTime>
       </launcher>
@@ -106,7 +110,7 @@ The config file is as follows:
     </slave>
   </slaves>
   <quietPeriod>5</quietPeriod>
- <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+  <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
   <views>
     <hudson.model.AllView>
       <owner class="hudson" reference="../../.."/>
@@ -121,6 +125,8 @@ The config file is as follows:
   <label></label>
   <nodeProperties/>
   <globalNodeProperties/>
+
+
 ```
 
 **Step 2) Install the Jenkins plugins:**
@@ -140,8 +146,8 @@ Build when a change is pushed to GitHub
 
 **Shell Command to Build the Project:**
 ```
-if [ -d "/var/lib/jenkins/jobs/ND4JFreeStyle/workspace" ]; then
-                cd /var/lib/jenkins/jobs/ND4JFreeStyle/workspace
+if [ -d "/var/lib/jenkins/workspace/ND4JFreeStyle" ]; then
+                cd /var/lib/jenkins/workspace/ND4JFreeStyle
 else
                 cd /home/ubuntu/workspace/ND4JFreeStyle
 fi
@@ -159,10 +165,11 @@ rm -rf /home/ubuntu/workspace/ND4JFreeStyle/      			## Clean the directory post
 <li>We have created a setup.sh file on the master that gets copied and executed on the slave as a part of the launch initialization process (slave).</li>
 </ol>
 ```
-ubuntu@ip-172-31-40-43:~/SlaveSetup$ cat setup.sh
+ubuntu@ip-172-31-46-200:~/SlaveSetup$ cat setup.sh
 sudo apt-get -y update
 sudo apt-get install maven -y
 sudo apt-get install git -y
+
 ```
 
 **GitHub Hook:**
@@ -174,7 +181,7 @@ sudo apt-get install git -y
 **Config.xml for the Auto Build Job:**
 
 ```
-ubuntu@ip-172-31-40-43:/var/lib/jenkins/jobs/ND4JFreeStyle$ cat config.xml
+ubuntu@ip-172-31-46-200:/var/lib/jenkins/jobs/ND4JFreeStyle$ cat config.xml
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
@@ -182,15 +189,14 @@ ubuntu@ip-172-31-40-43:/var/lib/jenkins/jobs/ND4JFreeStyle$ cat config.xml
   <keepDependencies>false</keepDependencies>
   <properties>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.10">
-      <projectUrl>https://github.com/sjoshi6/nd4j.git/</projectUrl>
+      <projectUrl>https://github.com/ameyp1992/deeplearning4j.git/</projectUrl>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.4">
     <configVersion>2</configVersion>
-
-<userRemoteConfigs>
+    <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>https://github.com/sjoshi6/nd4j.git</url>
+        <url>https://github.com/ameyp1992/deeplearning4j.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -214,9 +220,9 @@ ubuntu@ip-172-31-40-43:/var/lib/jenkins/jobs/ND4JFreeStyle$ cat config.xml
   <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>
-if [ -d &quot;/var/lib/jenkins/jobs/ND4JFreeStyle/workspace&quot; ]; then
-                cd /var/lib/jenkins/jobs/ND4JFreeStyle/workspace
+      <command>if [ -d &quot;/var/lib/jenkins/workspace/ND4JFreeStyle&quot; ]; then
+                cd /var/lib/jenkins/workspace/ND4JFreeStyle
+
 else
                 cd /home/ubuntu/workspace/ND4JFreeStyle
 fi
@@ -245,14 +251,14 @@ We are using Jenkins for build server setup. Therefore we can directly access th
 
 **Jenkins master IP:** http://54.148.61.150:8080/
 
-**Slave 1 DashBoard:** http://54.148.61.150:8080/computer/ND4J%20Slave/
+**Slave 1 DashBoard:** http://54.148.61.150:8080/computer/Slave/
 
-**Slave 2 DashBoard:** http://54.148.61.150:8080/computer/ND4J%20Slave2/
+**Slave 2 DashBoard:** http://54.148.61.150:8080/computer/Slave2/
 
 
 To view the Build Status/History for the Build Job we can use the following Link
 
-**Build Status:** http://554.148.61.150:8080/job/ND4JFreeStyle/
+**Build Status:** http://54.148.61.150:8080/job/ND4JFreeStyle/
 
 
 
