@@ -43,7 +43,7 @@
 
 
     <profiles>
-
+        
         <profile>
             <id>qa</id>
             <build>
@@ -59,6 +59,29 @@
                                 <configuration>
                                     <outputDirectory>${project.build.directory}/lib</outputDirectory>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                    
+                    <plugin>
+                        <groupId>org.nd4j</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>2.5.2</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <failOnError>false</failOnError>
+                            <threshold>Low</threshold>
+                            <xmlOutput>true</xmlOutput>
+                            <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>analyze-compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
