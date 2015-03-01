@@ -69,7 +69,7 @@
                         <artifactId>findbugs-maven-plugin</artifactId>
                         <version>3.0.0</version>
                         <configuration>
-                            <effort>Max</effort>
+                            <effort>Low</effort>
                             <failOnError>false</failOnError>
                             <threshold>Low</threshold>
                             <xmlOutput>true</xmlOutput>
