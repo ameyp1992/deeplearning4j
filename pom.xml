@@ -67,7 +67,7 @@
                     <plugin>
                         <groupId>org.nd4j</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>2.5.2</version>
+                        <version>3.0.0</version>
                         <configuration>
                             <effort>Max</effort>
                             <failOnError>false</failOnError>
@@ -265,7 +265,7 @@
         <plugin>
             <groupId>org.nd4j</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
-            <version>2.5.2</version>
+            <version>3.0.0</version>
             <configuration>
                 <!--
                     Enables analysis which takes more memory but finds more bugs.
