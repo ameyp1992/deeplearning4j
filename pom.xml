@@ -71,7 +71,7 @@
                         <artifactId>findbugs-maven-plugin</artifactId>
                         <version>3.0.0</version>
                         <configuration>
-                            <effort>low</effort>
+                            <effort>min</effort>
                             <failOnError>false</failOnError>
                             <threshold>low</threshold>
                             <xmlOutput>true</xmlOutput>
@@ -316,7 +316,7 @@
                     If you run out of memory, changes the value of the effort element
                     to 'low'.
                 -->
-                <effort>low</effort>
+                <effort>min</effort>
                 <!-- Reports all bugs (other values are medium and max) -->
                 <threshold>low</threshold>
                 <!-- Produces XML report -->
